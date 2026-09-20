@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace FileObjectApp
 {
@@ -56,59 +55,29 @@ namespace FileObjectApp
     {
         public static FileObject Parse(string input)
         {
-            List<string> tokens = SplitIntoTokens(input);
+            int firstQuote = input.IndexOf('"');
+            int secondQuote = input.IndexOf('"', firstQuote + 1);
 
-            string type = tokens[0];
+            if (firstQuote < 0 || secondQuote < 0)
+                throw new Exception("В строке нет имени файла в кавычках: " + input);
+
+            string name = input.Substring(firstQuote + 1, secondQuote - firstQuote - 1);
+
+            string withoutName = input.Remove(firstQuote, secondQuote - firstQuote + 1);
+
+            string[] parts = withoutName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            if (parts.Length < 3)
+                throw new Exception("В строке не хватает данных: " + input);
+
+            string type = parts[0];
             if (type != "Файл")
                 throw new Exception("Неизвестный тип объекта: " + type);
 
-            string name = RemoveQuotes(tokens[1]);
-            SimpleDate date = SimpleDate.Parse(tokens[2]);
-            int size = int.Parse(tokens[3]);
+            SimpleDate date = SimpleDate.Parse(parts[1]);
+            int size = int.Parse(parts[2]);
 
             return new FileObject(name, date, size);
-        }
-
-        static List<string> SplitIntoTokens(string input)
-        {
-            List<string> tokens = new List<string>();
-            string current = "";
-            bool insideQuotes = false;
-
-            for (int i = 0; i < input.Length; i++)
-            {
-                char c = input[i];
-
-                if (c == '"')
-                {
-                    insideQuotes = !insideQuotes;
-                    current = current + c;
-                }
-                else if (c == ' ' && insideQuotes == false)
-                {
-                    if (current != "")
-                    {
-                        tokens.Add(current);
-                        current = "";
-                    }
-                }
-                else
-                {
-                    current = current + c;
-                }
-            }
-
-            if (current != "")
-                tokens.Add(current);
-
-            return tokens;
-        }
-
-        static string RemoveQuotes(string text)
-        {
-            if (text.Length >= 2 && text[0] == '"' && text[text.Length - 1] == '"')
-                return text.Substring(1, text.Length - 2);
-            return text;
         }
     }
 
