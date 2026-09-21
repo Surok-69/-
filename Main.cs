@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace FileObjectApp
 {
@@ -85,21 +86,118 @@ namespace FileObjectApp
     {
         public static void Main()
         {
-            string[] inputs = new string[]
-            {
-                "Файл \"report.docx\" 2024.03.15 204800",
-                "Файл \"my photo.jpg\" 2023.12.01 1048576",
-                "Файл \"notes.txt\" 2025.01.09 0",
-                "Файл \"a b c d.txt\" 2022.07.30 42"
-            };
+            List<FileObject> files = new List<FileObject>();
 
-            for (int i = 0; i < inputs.Length; i++)
+            files.Add(FileParser.Parse("Файл \"report.docx\" 2024.03.15 204800"));
+            files.Add(FileParser.Parse("Файл \"my photo.jpg\" 2023.12.01 1048576"));
+            files.Add(FileParser.Parse("Файл \"notes.txt\" 2025.01.09 0"));
+            files.Add(FileParser.Parse("Файл \"a b c d.txt\" 2022.07.30 42"));
+
+            while (true)
             {
-                Console.WriteLine("Вход: " + inputs[i]);
-                FileObject file = FileParser.Parse(inputs[i]);
-                Console.WriteLine("Результат: " + file);
+                Console.WriteLine("Меню:");
+                Console.WriteLine("1. Показать список файлов");
+                Console.WriteLine("2. Добавить файл");
+                Console.WriteLine("3. Удалить файл");
+                Console.WriteLine("4. Выход");
+                Console.Write("Ваш выбор: ");
+
+                string choice = Console.ReadLine();
                 Console.WriteLine();
+
+                if (choice == "1")
+                {
+                    ShowFiles(files);
+                }
+                else if (choice == "2")
+                {
+                    AddFile(files);
+                }
+                else if (choice == "3")
+                {
+                    DeleteFile(files);
+                }
+                else if (choice == "4")
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Такого пункта нет, попробуйте ещё раз.");
+                    Console.WriteLine();
+                }
             }
+        }
+
+        static void ShowFiles(List<FileObject> files)
+        {
+            if (files.Count == 0)
+            {
+                Console.WriteLine("Список пуст.");
+                Console.WriteLine();
+                return;
+            }
+
+            for (int i = 0; i < files.Count; i++)
+            {
+                Console.WriteLine((i + 1) + ". " + files[i]);
+            }
+            Console.WriteLine();
+        }
+
+        static void AddFile(List<FileObject> files)
+        {
+            Console.WriteLine("Введите строку в формате:");
+            Console.WriteLine("Файл \"имя\" гггг.мм.дд размер");
+            Console.Write("> ");
+
+            string input = Console.ReadLine();
+
+            try
+            {
+                FileObject file = FileParser.Parse(input);
+                files.Add(file);
+                Console.WriteLine("Файл добавлен.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ошибка: " + ex.Message);
+            }
+            Console.WriteLine();
+        }
+
+        static void DeleteFile(List<FileObject> files)
+        {
+            if (files.Count == 0)
+            {
+                Console.WriteLine("Удалять нечего — список пуст.");
+                Console.WriteLine();
+                return;
+            }
+
+            ShowFiles(files);
+
+            Console.Write("Введите номер файла для удаления: ");
+            string input = Console.ReadLine();
+
+            int number;
+            if (!int.TryParse(input, out number))
+            {
+                Console.WriteLine("Это не число.");
+                Console.WriteLine();
+                return;
+            }
+
+            if (number < 1 || number > files.Count)
+            {
+                Console.WriteLine("Файла с таким номером нет.");
+                Console.WriteLine();
+                return;
+            }
+
+            Console.WriteLine("Удалён: " + files[number - 1]);
+            files.RemoveAt(number - 1);
+            Console.WriteLine();
         }
     }
 }
