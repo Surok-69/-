@@ -6,7 +6,6 @@
     <RootNamespace></RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <StartupObject>Zach</StartupObject>
   </PropertyGroup>
 
 </Project>

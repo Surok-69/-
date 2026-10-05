@@ -1,0 +1,4 @@
+"report.docx" 01.03.2024 2048
+F "photo.png" 15.04.2024 512
+D "Documents" 10.01.2024 25
+L "Desktop link" 05.05.2024 C:\Users\Public\Documents
