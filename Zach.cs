@@ -9,7 +9,7 @@ namespace Laba1
     abstract class Item
     {
         public string Name { get; }
-        public DateTime Date { get; }
+        public DateTime Date { get; } 
 
         protected Item(string name, DateTime date)
         {
